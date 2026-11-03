@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#ff2da5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Rumi's K-Pop Demon Hunters Word Quest</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <style>
+    :root {
+      --bg-dark: #120726;
+      --bg-card: rgba(34, 15, 68, 0.92);
+      --pink: #ff2da5;
+      --cyan: #00f5d4;
+      --gold: #ffbe0b;
+      --purple: #9b5de5;
+      --text: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #2b1055 0%, #120726 70%);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 14px 76px;
+      position: relative;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 18px;
+      padding: 8px 12px;
+      backdrop-filter: blur(10px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+    }
+    .brand img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1.5px solid var(--cyan);
+    }
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-btn {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .pill-btn.active {
+      background: var(--pink);
+      border-color: #fff;
+    }
+    .trio-stage {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .hero-card {
+      background: rgba(255,255,255,0.06);
+      border: 2px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .hero-card.active {
+      transform: translateY(-4px);
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px rgba(0, 245, 212, 0.45);
+      background: rgba(155, 93, 229, 0.25);
+    }
+    .hero-name {
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+    .hero-role {
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+    .speech-bubble {
+      background: linear-gradient(135deg, rgba(255,45,165,0.25), rgba(0,245,212,0.2));
+      border: 1.5px solid rgba(0, 245, 212, 0.5);
+      border-radius: 14px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .quest-card {
+      background: var(--bg-card);
+      border: 2px solid rgba(255, 45, 165, 0.45);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+    .category-badge {
+      display: inline-block;
+      align-self: center;
+      background: rgba(0, 245, 212, 0.16);
+      color: var(--cyan);
+      border: 1px solid var(--cyan);
+      border-radius: 999px;
+      padding: 3px 12px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .emoji-theater {
+      font-size: 3.1rem;
+      letter-spacing: 8px;
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .emoji-theater:active {
+      transform: scale(0.95);
+    }
+    .sentence-box {
+      font-size: 1.35rem;
+      line-height: 1.5;
+      font-weight: 800;
+      margin: 8px 0 14px;
+      min-height: 74px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .word-token {
+      padding: 2px 5px;
+      border-radius: 8px;
+      transition: background 0.18s, color 0.18s, transform 0.18s;
+    }
+    .word-token.reading {
+      background: var(--gold);
+      color: #120726;
+      transform: scale(1.1);
+    }
+    .blank-slot {
+      display: inline-block;
+      min-width: 104px;
+      padding: 4px 14px;
+      border-bottom: 3px dashed var(--cyan);
+      background: rgba(0, 245, 212, 0.14);
+      border-radius: 12px;
+      color: var(--gold);
+      font-weight: 900;
+    }
+    .blank-slot.filled {
+      border-bottom: 3px solid var(--gold);
+      background: rgba(255, 190, 11, 0.25);
+      color: #fff;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .opt-btn {
+      background: linear-gradient(145deg, #2e1660, #1f0d42);
+      border: 2px solid rgba(255,255,255,0.25);
+      color: #fff;
+      border-radius: 16px;
+      padding: 14px 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .opt-btn:active {
+      transform: scale(0.96);
+    }
+    .opt-btn.correct {
+      background: linear-gradient(145deg, #06d6a0, #04966f);
+      border-color: #fff;
+      box-shadow: 0 0 18px rgba(6, 214, 160, 0.7);
+    }
+    .opt-btn.wrong {
+      background: linear-gradient(145deg, #ef476f, #b5173e);
+      border-color: #fff;
+    }
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .nav-btn {
+      flex: 1;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.24);
+      padding: 11px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      cursor: pointer;
+    }
+    .nav-btn.primary {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      border-color: #fff;
+    }
+    .share-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(18, 7, 38, 0.96);
+      border-top: 1px solid rgba(255,255,255,0.18);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      z-index: 50;
+    }
+    .share-inner {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .footer-app-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .footer-app-meta img {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+    }
+    .footer-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--cyan);
+      color: #120726;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: none;
+      z-index: 100;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="top-bar">
+      <div class="brand">
+        <img src="icons/icon-192.png" alt="Rumi Icon" />
+        <span>Rumi Word Quest</span>
+      </div>
+      <div class="top-controls">
+        <button id="levelBtn" class="pill-btn">1 / 200</button>
+        <button id="speedBtn" class="pill-btn" title="Toggle Turtle Slow Voice">🐇 Normal</button>
+        <button id="starsBtn" class="pill-btn">⭐ <span id="starCount">0</span></button>
+      </div>
+    </div>
+
+    <div class="trio-stage">
+      <div class="hero-card active" data-hero="Rumi" onclick="selectHero('Rumi')">
+        <svg width="56" height="56" viewBox="0 0 100 100">
+          <circle cx="50" cy="54" r="32" fill="#ff2da5"/>
+          <polygon points="22,36 14,12 38,26" fill="#9b5de5" stroke="#00f5d4" stroke-width="3"/>
+          <polygon points="78,36 86,12 62,26" fill="#9b5de5" stroke="#00f5d4" stroke-width="3"/>
+          <circle cx="50" cy="56" r="24" fill="#ffe5ec"/>
+          <circle cx="41" cy="54" r="4" fill="#120726"/>
+          <circle cx="59" cy="54" r="4" fill="#120726"/>
+          <path d="M42,65 Q50,72 58,65" stroke="#ff2da5" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="hero-name" style="color:#ff70c6">Rumi</div>
+        <div class="hero-role">Lead Vocal</div>
+      </div>
+
+      <div class="hero-card" data-hero="Mira" onclick="selectHero('Mira')">
+        <svg width="56" height="56" viewBox="0 0 100 100">
+          <path d="M22,52 A28,28 0 0,1 78,52" stroke="#00f5d4" stroke-width="7" fill="none"/>
+          <circle cx="20" cy="55" r="9" fill="#00f5d4"/>
+          <circle cx="80" cy="55" r="9" fill="#00f5d4"/>
+          <circle cx="50" cy="56" r="24" fill="#ffe5ec"/>
+          <circle cx="41" cy="54" r="4" fill="#120726"/>
+          <circle cx="59" cy="54" r="4" fill="#120726"/>
+          <path d="M43,65 Q50,70 57,65" stroke="#00bbf9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="hero-name" style="color:#00f5d4">Mira</div>
+        <div class="hero-role">Cyber Dancer</div>
+      </div>
+
+      <div class="hero-card" data-hero="Zoey" onclick="selectHero('Zoey')">
+        <svg width="56" height="56" viewBox="0 0 100 100">
+          <circle cx="20" cy="36" r="13" fill="#ffbe0b"/>
+          <circle cx="80" cy="36" r="13" fill="#ffbe0b"/>
+          <circle cx="50" cy="56" r="24" fill="#ffe5ec"/>
+          <circle cx="41" cy="54" r="4" fill="#120726"/>
+          <circle cx="59" cy="54" r="4" fill="#120726"/>
+          <path d="M41,64 Q50,73 59,64" stroke="#ffbe0b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="hero-name" style="color:#ffbe0b">Zoey</div>
+        <div class="hero-role">Star Maknae</div>
+      </div>
+    </div>
+
+    <div id="speechBubble" class="speech-bubble">
+      🎤 Rumi: "Tap the emojis to hear a clue, then pick the missing word!"
+    </div>
+
+    <div class="quest-card">
+      <div id="categoryBadge" class="category-badge">Stage & Music</div>
+      <div id="emojiTheater" class="emoji-theater" onclick="readSentenceAloud(true)" title="Tap to hear sentence clue">🎤🎶✨</div>
+      <div id="sentenceBox" class="sentence-box"></div>
+      <div id="optionsGrid" class="options-grid"></div>
+
+      <div class="action-row">
+        <button class="nav-btn" onclick="prevStage()">◀ Prev</button>
+        <button class="nav-btn" onclick="readSentenceAloud(false)">🔊 Read Sentence</button>
+        <button class="nav-btn primary" onclick="nextStage()">Next ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="share-footer">
+    <div class="share-inner">
+      <div class="footer-app-meta">
+        <img src="icons/icon-192.png" alt="App Icon" />
+        <span id="appUrlText">Rumi K-Pop Word Quest (Offline Ready)</span>
+      </div>
+      <div class="footer-btns">
+        <button class="pill-btn active" onclick="shareAppLink()">📤 Share Link</button>
+        <button class="pill-btn" onclick="copyAppLink()">🔗 Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Link Copied!</div>
+
+  <script>
+    const SENTENCES = [{"id": 1, "emojis": "🎤🎶✨", "sentence": "Rumi sings a ___ on the glowing stage.", "answer": "song", "options": ["song", "shoe", "soup", "sand"], "category": "Stage & Music"}, {"id": 2, "emojis": "🎸⚡💜", "sentence": "Mira plays her electric ___ very loud.", "answer": "guitar", "options": ["guitar", "garden", "giraffe", "glasses"], "category": "Stage & Music"}, {"id": 3, "emojis": "🥁🌟🎵", "sentence": "Zoey hits the ___ to keep the beat.", "answer": "drum", "options": ["drum", "duck", "door", "desk"], "category": "Stage & Music"}, {"id": 4, "emojis": "💃✨🎶", "sentence": "The three friends love to ___ together.", "answer": "dance", "options": ["dance", "drink", "drive", "draw"], "category": "Stage & Music"}, {"id": 5, "emojis": "🎧💙🎵", "sentence": "Mira wears blue ___ to hear the music.", "answer": "headphones", "options": ["headphones", "helicopters", "hamburgers", "handbags"], "category": "Stage & Music"}, {"id": 6, "emojis": "🎹🎶🌟", "sentence": "Rumi plays a sweet melody on the ___.", "answer": "piano", "options": ["piano", "pillow", "apple", "pencil"], "category": "Stage & Music"}, {"id": 7, "emojis": "🎺✨🎉", "sentence": "The golden ___ makes a bright sound.", "answer": "trumpet", "options": ["trumpet", "tractor", "turtle", "tomato"], "category": "Stage & Music"}, {"id": 8, "emojis": "🎻💜🌙", "sentence": "A soft ___ plays under the moonlight.", "answer": "violin", "options": ["violin", "volcano", "vacuum", "village"], "category": "Stage & Music"}, {"id": 9, "emojis": "🎟️🏟️✨", "sentence": "Every fan holds a shiny concert ___.", "answer": "ticket", "options": ["ticket", "tiger", "toaster", "towel"], "category": "Stage & Music"}, {"id": 10, "emojis": "👑💜🌟", "sentence": "Rumi wears a sparkling ___ on her head.", "answer": "crown", "options": ["crown", "cloud", "clock", "crayon"], "category": "Stage & Music"}, {"id": 11, "emojis": "👟💃⚡", "sentence": "Zoey ties her pink ___ before the show.", "answer": "shoes", "options": ["shoes", "ships", "sheep", "shells"], "category": "Stage & Music"}, {"id": 12, "emojis": "🌟🎤👏", "sentence": "The happy crowd begins to ___ loudly.", "answer": "cheer", "options": ["cheer", "cheese", "chair", "cherry"], "category": "Stage & Music"}, {"id": 13, "emojis": "🪩✨💃", "sentence": "A shiny disco ___ spins above the stage.", "answer": "ball", "options": ["ball", "bell", "boat", "book"], "category": "Stage & Music"}, {"id": 14, "emojis": "🎀💖👧", "sentence": "Zoey wears a cute pink ___ in her hair.", "answer": "ribbon", "options": ["ribbon", "rabbit", "robot", "rocket"], "category": "Stage & Music"}, {"id": 15, "emojis": "🎇🏟️🎵", "sentence": "Bright ___ light up the concert sky.", "answer": "fireworks", "options": ["fireworks", "firetrucks", "feathers", "flowers"], "category": "Stage & Music"}, {"id": 16, "emojis": "📢🎶✨", "sentence": "Rumi speaks into the silver ___.", "answer": "microphone", "options": ["microphone", "microscope", "motorcycle", "mushroom"], "category": "Stage & Music"}, {"id": 17, "emojis": "🎼🎵📖", "sentence": "Mira reads the musical ___ on the page.", "answer": "notes", "options": ["notes", "noses", "nuts", "nets"], "category": "Stage & Music"}, {"id": 18, "emojis": "👗✨💜", "sentence": "Rumi puts on her sparkly stage ___.", "answer": "dress", "options": ["dress", "drum", "duck", "desk"], "category": "Stage & Music"}, {"id": 19, "emojis": "🕶️💖🌟", "sentence": "Zoey wears cool heart ___ on stage.", "answer": "glasses", "options": ["glasses", "gloves", "grapes", "guitars"], "category": "Stage & Music"}, {"id": 20, "emojis": "🏆🌟🎤", "sentence": "The K-Pop team wins a golden ___.", "answer": "trophy", "options": ["trophy", "train", "truck", "tree"], "category": "Stage & Music"}, {"id": 21, "emojis": "🪄✨💜", "sentence": "Rumi waves her magic ___ to cast a spell.", "answer": "wand", "options": ["wand", "wall", "watch", "whale"], "category": "Demon Hunter Magic"}, {"id": 22, "emojis": "🛡️💙⚡", "sentence": "Mira raises a glowing ___ to protect her friends.", "answer": "shield", "options": ["shield", "shirt", "shark", "ship"], "category": "Demon Hunter Magic"}, {"id": 23, "emojis": "⚔️🌟💜", "sentence": "The hero swings a sword of bright ___.", "answer": "light", "options": ["light", "leaf", "lemon", "lion"], "category": "Demon Hunter Magic"}, {"id": 24, "emojis": "🔮✨🌙", "sentence": "Zoey looks inside the glowing crystal ___.", "answer": "ball", "options": ["ball", "bird", "boat", "bed"], "category": "Demon Hunter Magic"}, {"id": 25, "emojis": "👻🚫✨", "sentence": "The hunters chase the silly shadow ___ away.", "answer": "ghost", "options": ["ghost", "goat", "goose", "grape"], "category": "Demon Hunter Magic"}, {"id": 26, "emojis": "💎💙⚡", "sentence": "Mira finds a magic blue ___ in the cave.", "answer": "gem", "options": ["gem", "gum", "goat", "gate"], "category": "Demon Hunter Magic"}, {"id": 27, "emojis": "🦋✨💜", "sentence": "A glowing purple ___ guides Rumi home.", "answer": "butterfly", "options": ["butterfly", "bus", "banana", "basket"], "category": "Demon Hunter Magic"}, {"id": 28, "emojis": "🗝️🚪🌟", "sentence": "Zoey uses a golden ___ to open the portal.", "answer": "key", "options": ["key", "kite", "king", "kitten"], "category": "Demon Hunter Magic"}, {"id": 29, "emojis": "📜✨🕯️", "sentence": "Rumi reads an ancient magic ___.", "answer": "scroll", "options": ["scroll", "spoon", "shoe", "snake"], "category": "Demon Hunter Magic"}, {"id": 30, "emojis": "🧪💖✨", "sentence": "Mira mixes a pink healing ___.", "answer": "potion", "options": ["potion", "potato", "pocket", "pillow"], "category": "Demon Hunter Magic"}, {"id": 31, "emojis": "🐉🔥🌟", "sentence": "A friendly dragon breathes warm ___.", "answer": "fire", "options": ["fire", "fish", "flower", "feather"], "category": "Demon Hunter Magic"}, {"id": 32, "emojis": "🦄🌈✨", "sentence": "Zoey rides a white ___ across the rainbow.", "answer": "unicorn", "options": ["unicorn", "umbrella", "uniform", "uncle"], "category": "Demon Hunter Magic"}, {"id": 33, "emojis": "🏰🌙💜", "sentence": "The hunters guard the crystal ___ at night.", "answer": "castle", "options": ["castle", "carrot", "camera", "candle"], "category": "Demon Hunter Magic"}, {"id": 34, "emojis": "⚡💙🧤", "sentence": "Sparks fly from Mira's magic ___.", "answer": "gloves", "options": ["gloves", "glasses", "grapes", "gardens"], "category": "Demon Hunter Magic"}, {"id": 35, "emojis": "🌟🧚‍♀️✨", "sentence": "A tiny ___ sprinkles gold dust on Zoey.", "answer": "fairy", "options": ["fairy", "farmer", "feather", "finger"], "category": "Demon Hunter Magic"}, {"id": 36, "emojis": "🧭🗺️✨", "sentence": "The magic ___ points toward the hidden star.", "answer": "compass", "options": ["compass", "cookie", "computer", "candle"], "category": "Demon Hunter Magic"}, {"id": 37, "emojis": "🔔✨👻", "sentence": "Rumi rings a silver ___ to clear the fog.", "answer": "bell", "options": ["bell", "ball", "belt", "bear"], "category": "Demon Hunter Magic"}, {"id": 38, "emojis": "🧥💜🌙", "sentence": "Rumi wears a warm purple ___ in the night wind.", "answer": "cloak", "options": ["cloak", "clock", "cloud", "clown"], "category": "Demon Hunter Magic"}, {"id": 39, "emojis": "💫🌟🛡️", "sentence": "Three glowing ___ circle around the team.", "answer": "stars", "options": ["stars", "stairs", "stamps", "stones"], "category": "Demon Hunter Magic"}, {"id": 40, "emojis": "🌈🌉✨", "sentence": "The heroes cross a shimmering rainbow ___.", "answer": "bridge", "options": ["bridge", "brush", "bread", "branch"], "category": "Demon Hunter Magic"}, {"id": 41, "emojis": "🐱💜✨", "sentence": "Rumi pets her fluffy purple ___.", "answer": "cat", "options": ["cat", "car", "cup", "cap"], "category": "Magical Pets"}, {"id": 42, "emojis": "🐶🦴💛", "sentence": "The happy ___ wags its tail for a bone.", "answer": "dog", "options": ["dog", "doll", "door", "duck"], "category": "Magical Pets"}, {"id": 43, "emojis": "🐰🥕💖", "sentence": "Zoey feeds a crunchy carrot to the ___.", "answer": "rabbit", "options": ["rabbit", "robot", "rocket", "ribbon"], "category": "Magical Pets"}, {"id": 44, "emojis": "🦊🍂🌟", "sentence": "A clever orange ___ jumps over the log.", "answer": "fox", "options": ["fox", "frog", "fish", "fan"], "category": "Magical Pets"}, {"id": 45, "emojis": "🐼🎋💚", "sentence": "The cute ___ munches on green bamboo.", "answer": "panda", "options": ["panda", "pencil", "pillow", "pizza"], "category": "Magical Pets"}, {"id": 46, "emojis": "🐨🌳💤", "sentence": "A sleepy ___ hugs the tree branch.", "answer": "koala", "options": ["koala", "kangaroo", "kitten", "kite"], "category": "Magical Pets"}, {"id": 47, "emojis": "🦁👑🌟", "sentence": "The brave ___ lets out a mighty roar.", "answer": "lion", "options": ["lion", "lemon", "leaf", "lamp"], "category": "Magical Pets"}, {"id": 48, "emojis": "🐯🧡🌿", "sentence": "An orange ___ has black stripes on its fur.", "answer": "tiger", "options": ["tiger", "train", "truck", "table"], "category": "Magical Pets"}, {"id": 49, "emojis": "🐸🪷💧", "sentence": "A green ___ hops onto the lily pad.", "answer": "frog", "options": ["frog", "fork", "flag", "flute"], "category": "Magical Pets"}, {"id": 50, "emojis": "🐢🌊🐚", "sentence": "The slow ___ swims gently in the sea.", "answer": "turtle", "options": ["turtle", "turkey", "tomato", "towel"], "category": "Magical Pets"}, {"id": 51, "emojis": "🦉🌙🌳", "sentence": "A wise ___ hoots softly in the night tree.", "answer": "owl", "options": ["owl", "onion", "orange", "ocean"], "category": "Magical Pets"}, {"id": 52, "emojis": "🦜🌈🎵", "sentence": "The colorful ___ copies Rumi's song.", "answer": "parrot", "options": ["parrot", "peanut", "pencil", "pillow"], "category": "Magical Pets"}, {"id": 53, "emojis": "🐹🌻💛", "sentence": "Zoey's tiny ___ stuffs seeds in its cheeks.", "answer": "hamster", "options": ["hamster", "hammer", "helmet", "hanger"], "category": "Magical Pets"}, {"id": 54, "emojis": "🐴🌾💨", "sentence": "Mira rides a fast ___ across the field.", "answer": "horse", "options": ["horse", "house", "heart", "hat"], "category": "Magical Pets"}, {"id": 55, "emojis": "🐧❄️🐟", "sentence": "The little ___ waddles across the ice.", "answer": "penguin", "options": ["penguin", "pumpkin", "popcorn", "present"], "category": "Magical Pets"}, {"id": 56, "emojis": "🐬🌊✨", "sentence": "A playful ___ leaps high out of the waves.", "answer": "dolphin", "options": ["dolphin", "doctor", "donkey", "donut"], "category": "Magical Pets"}, {"id": 57, "emojis": "🐝🌸🍯", "sentence": "A busy ___buzzes around the pink flower.", "answer": "bee", "options": ["bee", "bed", "bus", "bag"], "category": "Magical Pets"}, {"id": 58, "emojis": "🐞🌿🔴", "sentence": "A tiny red ___ lands on Zoey's finger.", "answer": "ladybug", "options": ["ladybug", "lollipop", "lantern", "ladder"], "category": "Magical Pets"}, {"id": 59, "emojis": "🦢💙💧", "sentence": "A graceful white ___ glides across the lake.", "answer": "swan", "options": ["swan", "star", "shoe", "spoon"], "category": "Magical Pets"}, {"id": 60, "emojis": "🐒🍌🌴", "sentence": "The funny ___ peels a yellow banana.", "answer": "monkey", "options": ["monkey", "monster", "muffin", "mirror"], "category": "Magical Pets"}, {"id": 61, "emojis": "🍓🎂✨", "sentence": "Rumi puts a red ___ on top of the cake.", "answer": "strawberry", "options": ["strawberry", "sunflower", "sunglasses", "skateboard"], "category": "Tasty Treats"}, {"id": 62, "emojis": "🍦💖😋", "sentence": "Zoey licks her cold pink ___ cone.", "answer": "ice cream", "options": ["ice cream", "airplane", "umbrella", "elephant"], "category": "Tasty Treats"}, {"id": 63, "emojis": "🍕🧀🔥", "sentence": "The girls share a warm slice of cheesy ___.", "answer": "pizza", "options": ["pizza", "pillow", "pencil", "piano"], "category": "Tasty Treats"}, {"id": 64, "emojis": "🍩🌈✨", "sentence": "Mira picks a sweet ___ with rainbow sprinkles.", "answer": "donut", "options": ["donut", "dolphin", "doctor", "drum"], "category": "Tasty Treats"}, {"id": 65, "emojis": "🍎🌳❤️", "sentence": "Rumi bites into a crisp red ___.", "answer": "apple", "options": ["apple", "acorn", "anchor", "apron"], "category": "Tasty Treats"}, {"id": 66, "emojis": "🍌💛🐒", "sentence": "Zoey eats a sweet yellow ___ before practice.", "answer": "banana", "options": ["banana", "balloon", "basket", "blanket"], "category": "Tasty Treats"}, {"id": 67, "emojis": "🍉☀️😋", "sentence": "Cold juicy ___ tastes great on a hot day.", "answer": "watermelon", "options": ["watermelon", "waterfall", "wheelbarrow", "windshield"], "category": "Tasty Treats"}, {"id": 68, "emojis": "🥞🍯🧈", "sentence": "Mira pours sweet syrup on her warm ___.", "answer": "pancakes", "options": ["pancakes", "paintings", "parrots", "pajamas"], "category": "Tasty Treats"}, {"id": 69, "emojis": "🍿🎬✨", "sentence": "The team shares a big bowl of crunchy ___.", "answer": "popcorn", "options": ["popcorn", "pumpkin", "penguin", "backpack"], "category": "Tasty Treats"}, {"id": 70, "emojis": "🍪🥛🤎", "sentence": "Zoey dips her chocolate chip ___ in milk.", "answer": "cookie", "options": ["cookie", "camera", "candle", "carrot"], "category": "Tasty Treats"}, {"id": 71, "emojis": "🧁💖✨", "sentence": "Rumi bakes a vanilla ___ with pink frosting.", "answer": "cupcake", "options": ["cupcake", "curtain", "cushion", "calendar"], "category": "Tasty Treats"}, {"id": 72, "emojis": "🍇💜🥣", "sentence": "Mira washes a bunch of purple ___.", "answer": "grapes", "options": ["grapes", "gloves", "glasses", "guitars"], "category": "Tasty Treats"}, {"id": 73, "emojis": "🍒🍨❤️", "sentence": "Zoey puts two sweet ___ on her sundae.", "answer": "cherries", "options": ["cherries", "chairs", "cheeses", "chickens"], "category": "Tasty Treats"}, {"id": 74, "emojis": "🥐🧈☕", "sentence": "A warm flaky ___ smells delicious in the morning.", "answer": "croissant", "options": ["croissant", "crayon", "crown", "cricket"], "category": "Tasty Treats"}, {"id": 75, "emojis": "🥨🧂😋", "sentence": "Mira snacks on a salty twisted ___.", "answer": "pretzel", "options": ["pretzel", "present", "princess", "printer"], "category": "Tasty Treats"}, {"id": 76, "emojis": "🍭🌈💖", "sentence": "Zoey swirls a giant rainbow ___.", "answer": "lollipop", "options": ["lollipop", "ladybug", "lantern", "laptop"], "category": "Tasty Treats"}, {"id": 77, "emojis": "🥪🧀🥬", "sentence": "Rumi packs a healthy ___ for lunch.", "answer": "sandwich", "options": ["sandwich", "sailboat", "snowman", "starfish"], "category": "Tasty Treats"}, {"id": 78, "emojis": "🍜🥢♨️", "sentence": "Hot noodle ___ warms the hunters after rain.", "answer": "soup", "options": ["soup", "soap", "sock", "sand"], "category": "Tasty Treats"}, {"id": 79, "emojis": "🧃🍓🧊", "sentence": "Zoey sips cold berry ___ through a straw.", "answer": "juice", "options": ["juice", "jacket", "jungle", "jewel"], "category": "Tasty Treats"}, {"id": 80, "emojis": "🍫✨💜", "sentence": "Mira shares a square of sweet ___.", "answer": "chocolate", "options": ["chocolate", "crocodile", "chandelier", "caterpillar"], "category": "Tasty Treats"}, {"id": 81, "emojis": "☀️🕶️💛", "sentence": "The bright ___ shines warmly in the blue sky.", "answer": "sun", "options": ["sun", "saw", "sea", "sock"], "category": "Weather & Nature"}, {"id": 82, "emojis": "🌧️☔💧", "sentence": "Rumi opens her purple umbrella in the ___.", "answer": "rain", "options": ["rain", "ring", "rope", "rose"], "category": "Weather & Nature"}, {"id": 83, "emojis": "🌈☀️💧", "sentence": "A colorful ___ appears after the storm.", "answer": "rainbow", "options": ["rainbow", "rabbit", "rocket", "robot"], "category": "Weather & Nature"}, {"id": 84, "emojis": "❄️⛄🧣", "sentence": "Soft white ___ falls gently on the town.", "answer": "snow", "options": ["snow", "soap", "soup", "sand"], "category": "Weather & Nature"}, {"id": 85, "emojis": "🌬️🍃🪁", "sentence": "The strong ___ lifts Zoey's kite high.", "answer": "wind", "options": ["wind", "wall", "worm", "wolf"], "category": "Weather & Nature"}, {"id": 86, "emojis": "☁️🤍🌤️", "sentence": "Fluffy white ___ float across the sky.", "answer": "clouds", "options": ["clouds", "clocks", "clowns", "crowns"], "category": "Weather & Nature"}, {"id": 87, "emojis": "🌸🌱💖", "sentence": "Pink cherry ___ bloom in the spring.", "answer": "blossoms", "options": ["blossoms", "blankets", "balloons", "baskets"], "category": "Weather & Nature"}, {"id": 88, "emojis": "🌻☀️💛", "sentence": "A tall yellow ___ turns toward the sun.", "answer": "sunflower", "options": ["sunflower", "strawberry", "skateboard", "sunglasses"], "category": "Weather & Nature"}, {"id": 89, "emojis": "🍂🍁🧡", "sentence": "Crunchy autumn ___ cover the park path.", "answer": "leaves", "options": ["leaves", "lemons", "lions", "ladders"], "category": "Weather & Nature"}, {"id": 90, "emojis": "⛰️🌲☁️", "sentence": "The team hikes up the tall green ___.", "answer": "mountain", "options": ["mountain", "mushroom", "monkey", "muffin"], "category": "Weather & Nature"}, {"id": 91, "emojis": "🌊🏖️🐚", "sentence": "Blue ocean ___ roll onto the sandy beach.", "answer": "waves", "options": ["waves", "whales", "wheels", "watches"], "category": "Weather & Nature"}, {"id": 92, "emojis": "🌙⭐🌌", "sentence": "A silver ___ glows brightly at midnight.", "answer": "moon", "options": ["moon", "milk", "mouse", "mask"], "category": "Weather & Nature"}, {"id": 93, "emojis": "⚡🌩️🌧️", "sentence": "A bright flash of ___ lights the dark clouds.", "answer": "lightning", "options": ["lightning", "ladybug", "lollipop", "lantern"], "category": "Weather & Nature"}, {"id": 94, "emojis": "🌹❤️🌿", "sentence": "Rumi smells a sweet red ___ in the garden.", "answer": "rose", "options": ["rose", "rope", "rock", "ring"], "category": "Weather & Nature"}, {"id": 95, "emojis": "🌵☀️🏜️", "sentence": "A green ___ grows in the warm desert.", "answer": "cactus", "options": ["cactus", "camera", "candle", "carrot"], "category": "Weather & Nature"}, {"id": 96, "emojis": "🌋🔥🪨", "sentence": "Smoke rises from the top of the ___.", "answer": "volcano", "options": ["volcano", "violin", "vacuum", "village"], "category": "Weather & Nature"}, {"id": 97, "emojis": "💧🌿☀️", "sentence": "Morning ___ sparkles on the green grass.", "answer": "dew", "options": ["dew", "dog", "door", "drum"], "category": "Weather & Nature"}, {"id": 98, "emojis": "🌲🐿️🌰", "sentence": "A brown squirrel hides an acorn in the ___.", "answer": "tree", "options": ["tree", "train", "truck", "tent"], "category": "Weather & Nature"}, {"id": 99, "emojis": "🪨🏞️💧", "sentence": "Clear water flows down the tall ___.", "answer": "waterfall", "options": ["waterfall", "watermelon", "wheelbarrow", "windshield"], "category": "Weather & Nature"}, {"id": 100, "emojis": "🌅🧡🌊", "sentence": "The girls watch a golden ___ over the sea.", "answer": "sunset", "options": ["sunset", "sandwich", "snowman", "starfish"], "category": "Weather & Nature"}, {"id": 101, "emojis": "🚀🌌🔥", "sentence": "The silver ___ blasts off into deep space.", "answer": "rocket", "options": ["rocket", "rabbit", "robot", "ribbon"], "category": "Space & Stars"}, {"id": 102, "emojis": "🪐✨🌌", "sentence": "Mira spots a giant ___ with bright rings.", "answer": "planet", "options": ["planet", "pillow", "apple", "pencil"], "category": "Space & Stars"}, {"id": 103, "emojis": "👩‍🚀🌕✨", "sentence": "The brave ___ bounces on the moon.", "answer": "astronaut", "options": ["astronaut", "alligator", "ambulance", "aquarium"], "category": "Space & Stars"}, {"id": 104, "emojis": "🔭🌙⭐", "sentence": "Rumi looks through a ___ to see far stars.", "answer": "telescope", "options": ["telescope", "telephone", "television", "trampoline"], "category": "Space & Stars"}, {"id": 105, "emojis": "☄️💨🌌", "sentence": "A bright ___ streaks across the night sky.", "answer": "comet", "options": ["comet", "cookie", "camera", "camel"], "category": "Space & Stars"}, {"id": 106, "emojis": "🛸👽✨", "sentence": "A friendly green alien waves from a ___.", "answer": "spaceship", "options": ["spaceship", "sailboat", "skateboard", "snowflake"], "category": "Space & Stars"}, {"id": 107, "emojis": "🌌💜✨", "sentence": "Millions of stars swirl in the purple ___.", "answer": "galaxy", "options": ["galaxy", "garden", "garage", "guitar"], "category": "Space & Stars"}, {"id": 108, "emojis": "🛰️🌍📡", "sentence": "A shiny ___ orbits high above the Earth.", "answer": "satellite", "options": ["satellite", "sandwich", "sunflower", "suitcase"], "category": "Space & Stars"}, {"id": 109, "emojis": "🌍💙🌱", "sentence": "We all live together on planet ___.", "answer": "Earth", "options": ["Earth", "Eagle", "Engine", "Igloo"], "category": "Space & Stars"}, {"id": 110, "emojis": "⭐🌙💫", "sentence": "Zoey makes a wish on a shooting ___.", "answer": "star", "options": ["star", "stair", "stamp", "stone"], "category": "Space & Stars"}, {"id": 111, "emojis": "🌞🔥🪐", "sentence": "Eight planets travel around our warm ___.", "answer": "sun", "options": ["sun", "sea", "saw", "van"], "category": "Space & Stars"}, {"id": 112, "emojis": "🌑☀️✨", "sentence": "The moon passes in front of the sun during an ___.", "answer": "eclipse", "options": ["eclipse", "elephant", "envelope", "eggplant"], "category": "Space & Stars"}, {"id": 113, "emojis": "🪨🌌💥", "sentence": "A rocky ___ floats quietly through space.", "answer": "asteroid", "options": ["asteroid", "avocado", "airplane", "umbrella"], "category": "Space & Stars"}, {"id": 114, "emojis": "👨‍🚀🧤✨", "sentence": "The space explorer wears a white ___.", "answer": "helmet", "options": ["helmet", "hammer", "hamster", "hanger"], "category": "Space & Stars"}, {"id": 115, "emojis": "🌠💖🌙", "sentence": "A glowing ___ leaves a trail of gold dust.", "answer": "meteor", "options": ["meteor", "monkey", "muffin", "mirror"], "category": "Space & Stars"}, {"id": 116, "emojis": "🧭🌌⭐", "sentence": "Sailors use the North ___ to find their way.", "answer": "Star", "options": ["Star", "Shoe", "Soup", "Ship"], "category": "Space & Stars"}, {"id": 117, "emojis": "🔴🪐🚀", "sentence": "The rover rolls across the red planet ___.", "answer": "Mars", "options": ["Mars", "Milk", "Mice", "Mask"], "category": "Space & Stars"}, {"id": 118, "emojis": "🌌✨🔭", "sentence": "Mira draws a map of the starry ___.", "answer": "sky", "options": ["sky", "ski", "sea", "saw"], "category": "Space & Stars"}, {"id": 119, "emojis": "🛰️📸🪐", "sentence": "The space probe takes a ___ of Jupiter.", "answer": "photo", "options": ["photo", "phone", "piano", "pizza"], "category": "Space & Stars"}, {"id": 120, "emojis": "🌙🚀🏠", "sentence": "The hunters visit a futuristic moon ___.", "answer": "base", "options": ["base", "bear", "boat", "bird"], "category": "Space & Stars"}, {"id": 121, "emojis": "🐚🏖️💖", "sentence": "Zoey finds a pink ___ in the warm sand.", "answer": "seashell", "options": ["seashell", "sandwich", "squirrel", "scissors"], "category": "Ocean & Beach"}, {"id": 122, "emojis": "🦀🏖️🔴", "sentence": "A little red ___ walks sideways on the shore.", "answer": "crab", "options": ["crab", "crib", "crow", "cake"], "category": "Ocean & Beach"}, {"id": 123, "emojis": "🐙🌊💜", "sentence": "The purple ___ has eight wiggly arms.", "answer": "octopus", "options": ["octopus", "ostrich", "orange", "omelet"], "category": "Ocean & Beach"}, {"id": 124, "emojis": "🐳🌊💦", "sentence": "A giant blue ___ spouts water in the ocean.", "answer": "whale", "options": ["whale", "wheel", "watch", "wagon"], "category": "Ocean & Beach"}, {"id": 125, "emojis": "🦈🌊⚡", "sentence": "A fast gray ___ swims through the deep sea.", "answer": "shark", "options": ["shark", "shirt", "sheep", "shoe"], "category": "Ocean & Beach"}, {"id": 126, "emojis": "⭐🌊🧡", "sentence": "An orange ___ rests on the ocean floor.", "answer": "starfish", "options": ["starfish", "snowman", "sailboat", "sandwich"], "category": "Ocean & Beach"}, {"id": 127, "emojis": "🪼✨💙", "sentence": "A glowing ___ floats like a bell in the water.", "answer": "jellyfish", "options": ["jellyfish", "jackfruit", "jumpsuit", "jewel"], "category": "Ocean & Beach"}, {"id": 128, "emojis": "🏰🏖️🪣", "sentence": "The girls build a tall ___ with buckets of sand.", "answer": "sandcastle", "options": ["sandcastle", "strawberry", "skateboard", "sunglasses"], "category": "Ocean & Beach"}, {"id": 129, "emojis": "🏄‍♀️🌊💙", "sentence": "Mira rides the big wave on her ___.", "answer": "surfboard", "options": ["surfboard", "sunflower", "saxophone", "suitcase"], "category": "Ocean & Beach"}, {"id": 130, "emojis": "⛵🌬️🌊", "sentence": "A white ___ glides across the blue bay.", "answer": "sailboat", "options": ["sailboat", "sandwich", "snowman", "starfish"], "category": "Ocean & Beach"}, {"id": 131, "emojis": "🤿🐠🌊", "sentence": "Rumi wears ___ to see the colorful fish underwater.", "answer": "goggles", "options": ["goggles", "gloves", "grapes", "guitars"], "category": "Ocean & Beach"}, {"id": 132, "emojis": "🪸🐠🌈", "sentence": "Bright fish hide inside the pink ___ reef.", "answer": "coral", "options": ["coral", "camel", "candle", "carrot"], "category": "Ocean & Beach"}, {"id": 133, "emojis": "⚓🚢🌊", "sentence": "The captain drops the heavy iron ___.", "answer": "anchor", "options": ["anchor", "apple", "acorn", "apron"], "category": "Ocean & Beach"}, {"id": 134, "emojis": "🗼💡🌊", "sentence": "The tall ___ shines a beam to guide ships.", "answer": "lighthouse", "options": ["lighthouse", "lawnmower", "lollipop", "ladybug"], "category": "Ocean & Beach"}, {"id": 135, "emojis": "🐠🧡🤍", "sentence": "A little orange ___ swims near the sea anemone.", "answer": "clownfish", "options": ["clownfish", "croissant", "campfire", "calendar"], "category": "Ocean & Beach"}, {"id": 136, "emojis": "🐎🌊💛", "sentence": "A tiny curly-tailed ___ holds onto sea grass.", "answer": "seahorse", "options": ["seahorse", "suitcase", "sandwich", "starfish"], "category": "Ocean & Beach"}, {"id": 137, "emojis": "🏖️☂️☀️", "sentence": "Zoey sits under a striped beach ___.", "answer": "umbrella", "options": ["umbrella", "unicorn", "uniform", "ukulele"], "category": "Ocean & Beach"}, {"id": 138, "emojis": "🛶🌊🚣‍♀️", "sentence": "Rumi and Mira paddle a yellow ___.", "answer": "kayak", "options": ["kayak", "kitten", "kettle", "koala"], "category": "Ocean & Beach"}, {"id": 139, "emojis": "🦪⚪✨", "sentence": "A shiny white ___ hides inside the oyster shell.", "answer": "pearl", "options": ["pearl", "peach", "piano", "panda"], "category": "Ocean & Beach"}, {"id": 140, "emojis": "🌊🐚🪣", "sentence": "Zoey carries water in her plastic ___.", "answer": "bucket", "options": ["bucket", "button", "butter", "basket"], "category": "Ocean & Beach"}, {"id": 141, "emojis": "🎨🖌️🌈", "sentence": "Mira dips her ___ into the bright blue paint.", "answer": "brush", "options": ["brush", "bread", "bridge", "branch"], "category": "School & Art"}, {"id": 142, "emojis": "✏️📒✨", "sentence": "Rumi writes a new song with her yellow ___.", "answer": "pencil", "options": ["pencil", "pillow", "panda", "pizza"], "category": "School & Art"}, {"id": 143, "emojis": "📚🎒💜", "sentence": "Zoey puts three story ___ into her backpack.", "answer": "books", "options": ["books", "boots", "boats", "birds"], "category": "School & Art"}, {"id": 144, "emojis": "✂️📄💖", "sentence": "Mira uses safety ___ to cut paper stars.", "answer": "scissors", "options": ["scissors", "squirrel", "sandwich", "seashell"], "category": "School & Art"}, {"id": 145, "emojis": "🖍️🌈🖼️", "sentence": "Zoey colors a picture with a pink ___.", "answer": "crayon", "options": ["crayon", "crown", "cloud", "clock"], "category": "School & Art"}, {"id": 146, "emojis": "🎒🏫✨", "sentence": "Rumi zips up her purple school ___.", "answer": "backpack", "options": ["backpack", "baseball", "bathroom", "birdhouse"], "category": "School & Art"}, {"id": 147, "emojis": "🌍🏫🧭", "sentence": "Mira spins the round ___ to find Korea.", "answer": "globe", "options": ["globe", "glove", "glass", "grape"], "category": "School & Art"}, {"id": 148, "emojis": "📏✏️📐", "sentence": "Rumi draws a straight line using a ___.", "answer": "ruler", "options": ["ruler", "rabbit", "robot", "ribbon"], "category": "School & Art"}, {"id": 149, "emojis": "🧴📄✨", "sentence": "Zoey uses a ___ stick to paste the glitter.", "answer": "glue", "options": ["glue", "goat", "gate", "game"], "category": "School & Art"}, {"id": 150, "emojis": "🖥️⌨️💙", "sentence": "Mira types her music notes on the ___.", "answer": "computer", "options": ["computer", "cucumber", "calendar", "campfire"], "category": "School & Art"}, {"id": 151, "emojis": "🔬🧫✨", "sentence": "The curious student looks through a ___.", "answer": "microscope", "options": ["microscope", "microphone", "motorcycle", "mushroom"], "category": "School & Art"}, {"id": 152, "emojis": "🧮🔢🌟", "sentence": "Rumi solves the math puzzle on the ___.", "answer": "board", "options": ["board", "boat", "bird", "bear"], "category": "School & Art"}, {"id": 153, "emojis": "🎭🎨🎬", "sentence": "The friends paint a backdrop for the school ___.", "answer": "play", "options": ["play", "plane", "plate", "plant"], "category": "School & Art"}, {"id": 154, "emojis": "🏺🤎🎨", "sentence": "Mira shapes a small bowl out of soft ___.", "answer": "clay", "options": ["clay", "claw", "cloud", "clock"], "category": "School & Art"}, {"id": 155, "emojis": "📓🖊️💜", "sentence": "Rumi keeps her secret lyrics in a ___.", "answer": "notebook", "options": ["notebook", "necklace", "newspaper", "nightgown"], "category": "School & Art"}, {"id": 156, "emojis": "🧽✏️📄", "sentence": "Zoey fixes a mistake with a pink ___.", "answer": "eraser", "options": ["eraser", "elephant", "envelope", "eggplant"], "category": "School & Art"}, {"id": 157, "emojis": "🖼️🎨🌟", "sentence": "The colorful painting hangs in a golden ___.", "answer": "frame", "options": ["frame", "frog", "flag", "flute"], "category": "School & Art"}, {"id": 158, "emojis": "📐✏️🏫", "sentence": "A triangle has three straight ___.", "answer": "sides", "options": ["sides", "shoes", "ships", "shell"], "category": "School & Art"}, {"id": 159, "emojis": "🔔🏫🏃‍♀️", "sentence": "When the school ___ rings, it is time for recess.", "answer": "bell", "options": ["bell", "ball", "belt", "boat"], "category": "School & Art"}, {"id": 160, "emojis": "🎓🌟💜", "sentence": "The smart readers earn a special gold ___.", "answer": "sticker", "options": ["sticker", "scooter", "sweater", "slipper"], "category": "School & Art"}, {"id": 161, "emojis": "🛏️🧸🌙", "sentence": "Zoey hugs her soft teddy ___ at bedtime.", "answer": "bear", "options": ["bear", "boat", "bird", "bell"], "category": "Cozy Home"}, {"id": 162, "emojis": "🛋️🍿🎬", "sentence": "The three friends sit on the cozy ___ to watch a movie.", "answer": "couch", "options": ["couch", "cloud", "clock", "crown"], "category": "Cozy Home"}, {"id": 163, "emojis": "🛋️💡📖", "sentence": "Rumi turns on the bedside ___ to read.", "answer": "lamp", "options": ["lamp", "leaf", "lion", "lemon"], "category": "Cozy Home"}, {"id": 164, "emojis": "🪟🌧️🍵", "sentence": "Mira looks out the glass ___ at the rain.", "answer": "window", "options": ["window", "wagon", "wallet", "whistle"], "category": "Cozy Home"}, {"id": 165, "emojis": "🚪🔑🏠", "sentence": "Rumi unlocks the front ___ of their house.", "answer": "door", "options": ["door", "drum", "duck", "desk"], "category": "Cozy Home"}, {"id": 166, "emojis": "🪞✨💜", "sentence": "Zoey smiles at her reflection in the ___.", "answer": "mirror", "options": ["mirror", "monkey", "muffin", "monster"], "category": "Cozy Home"}, {"id": 167, "emojis": "🕰️🔔🏠", "sentence": "The wall ___ ticks quietly in the kitchen.", "answer": "clock", "options": ["clock", "cloud", "cloak", "clown"], "category": "Cozy Home"}, {"id": 168, "emojis": "🧣❄️💜", "sentence": "Rumi wraps a warm knitted ___ around her neck.", "answer": "scarf", "options": ["scarf", "shark", "shirt", "sheep"], "category": "Cozy Home"}, {"id": 169, "emojis": "🪥🦷✨", "sentence": "Zoey puts mint paste on her ___.", "answer": "toothbrush", "options": ["toothbrush", "telescope", "trampoline", "television"], "category": "Cozy Home"}, {"id": 170, "emojis": "🛁🫧🦆", "sentence": "A yellow rubber duck floats in the ___.", "answer": "bathtub", "options": ["bathtub", "backpack", "baseball", "birdhouse"], "category": "Cozy Home"}, {"id": 171, "emojis": "🚲🪖🌳", "sentence": "Mira rides her blue ___ down the park lane.", "answer": "bicycle", "options": ["bicycle", "balloon", "banana", "basket"], "category": "Cozy Home"}, {"id": 172, "emojis": "🛹⚡💖", "sentence": "Zoey rolls smoothly on her four-wheel ___.", "answer": "skateboard", "options": ["skateboard", "strawberry", "sunflower", "sandcastle"], "category": "Cozy Home"}, {"id": 173, "emojis": "⛺🔥🌲", "sentence": "The girls sleep inside a cozy ___ in the woods.", "answer": "tent", "options": ["tent", "tree", "train", "truck"], "category": "Cozy Home"}, {"id": 174, "emojis": "🔥🪵🌙", "sentence": "They roast sweet marshmallows over the ___.", "answer": "campfire", "options": ["campfire", "computer", "calendar", "croissant"], "category": "Cozy Home"}, {"id": 175, "emojis": "🚂🛤️💨", "sentence": "The fast ___ chugs along the iron tracks.", "answer": "train", "options": ["train", "tree", "truck", "tiger"], "category": "Cozy Home"}, {"id": 176, "emojis": "✈️☁️🌍", "sentence": "A big silver ___ flies high above the clouds.", "answer": "airplane", "options": ["airplane", "alligator", "ambulance", "aquarium"], "category": "Cozy Home"}, {"id": 177, "emojis": "🎈🎉💖", "sentence": "A helium ___ floats up toward the ceiling.", "answer": "balloon", "options": ["balloon", "banana", "basket", "blanket"], "category": "Cozy Home"}, {"id": 178, "emojis": "🎁🎀✨", "sentence": "Rumi ties a bow on Zoey's birthday ___.", "answer": "present", "options": ["present", "pretzel", "penguin", "pumpkin"], "category": "Cozy Home"}, {"id": 179, "emojis": "📸🌟😊", "sentence": "Mira snaps a fun ___ with her camera.", "answer": "picture", "options": ["picture", "pillow", "pencil", "pizza"], "category": "Cozy Home"}, {"id": 180, "emojis": "🧺🥪🌳", "sentence": "The team spreads a blanket for a sunny ___.", "answer": "picnic", "options": ["picnic", "pillow", "pencil", "planet"], "category": "Cozy Home"}, {"id": 181, "emojis": "🎢🎡✨", "sentence": "Zoey laughs on the fast roller ___.", "answer": "coaster", "options": ["coaster", "toaster", "rooster", "poster"], "category": "Cozy Home"}, {"id": 182, "emojis": "🎡🌙💡", "sentence": "The giant Ferris ___ glows with neon lights.", "answer": "wheel", "options": ["wheel", "whale", "watch", "wagon"], "category": "Cozy Home"}, {"id": 183, "emojis": "🛴💨💙", "sentence": "Mira zooms down the sidewalk on her ___.", "answer": "scooter", "options": ["scooter", "sticker", "sweater", "slipper"], "category": "Cozy Home"}, {"id": 184, "emojis": "🪁🌬️🌈", "sentence": "Rumi flies a diamond ___ in the breeze.", "answer": "kite", "options": ["kite", "king", "key", "kitten"], "category": "Cozy Home"}, {"id": 185, "emojis": "🧩🏠✨", "sentence": "The girls fit the last piece into the jigsaw ___.", "answer": "puzzle", "options": ["puzzle", "puddle", "pillow", "pencil"], "category": "Cozy Home"}, {"id": 186, "emojis": "🫖🍵💜", "sentence": "Warm herbal tea pours from the ceramic ___.", "answer": "teapot", "options": ["teapot", "turtle", "ticket", "tomato"], "category": "Cozy Home"}, {"id": 187, "emojis": "🥄🥣🍓", "sentence": "Zoey eats her cereal with a silver ___.", "answer": "spoon", "options": ["spoon", "shoe", "star", "swan"], "category": "Cozy Home"}, {"id": 188, "emojis": "🧹✨🏠", "sentence": "Mira sweeps the stage floor with a ___.", "answer": "broom", "options": ["broom", "brush", "bread", "bridge"], "category": "Cozy Home"}, {"id": 189, "emojis": "🪴🌿☀️", "sentence": "A green houseplant grows inside a clay ___.", "answer": "pot", "options": ["pot", "pen", "pig", "pie"], "category": "Cozy Home"}, {"id": 190, "emojis": "🧤❄️💙", "sentence": "Warm woolen ___ keep Mira's hands cozy.", "answer": "mittens", "options": ["mittens", "muffins", "monkeys", "mirrors"], "category": "Cozy Home"}, {"id": 191, "emojis": "👢🌧️💦", "sentence": "Zoey jumps in puddles wearing yellow rain ___.", "answer": "boots", "options": ["boots", "books", "boats", "birds"], "category": "Cozy Home"}, {"id": 192, "emojis": "🔦🌙⛺", "sentence": "Rumi shines her bright ___ down the dark trail.", "answer": "flashlight", "options": ["flashlight", "fireworks", "firetruck", "footprint"], "category": "Cozy Home"}, {"id": 193, "emojis": "🔭🦅🌲", "sentence": "Mira spots an eagle using her ___.", "answer": "binoculars", "options": ["binoculars", "butterflies", "basketballs", "blueberries"], "category": "Cozy Home"}, {"id": 194, "emojis": "🛶🏞️🌲", "sentence": "They cross the calm river in a wooden ___.", "answer": "canoe", "options": ["canoe", "camel", "candle", "carrot"], "category": "Cozy Home"}, {"id": 195, "emojis": "🛷❄️⛰️", "sentence": "The trio slides down the snowy hill on a ___.", "answer": "sled", "options": ["sled", "shoe", "star", "swan"], "category": "Cozy Home"}, {"id": 196, "emojis": "⛄🥕❄️", "sentence": "They build a happy ___ with a carrot nose.", "answer": "snowman", "options": ["snowman", "sandwich", "sailboat", "starfish"], "category": "Cozy Home"}, {"id": 197, "emojis": "🏰🎠✨", "sentence": "Zoey rides a painted horse on the ___.", "answer": "carousel", "options": ["carousel", "calendar", "campfire", "computer"], "category": "Cozy Home"}, {"id": 198, "emojis": "🎟️🎪🍿", "sentence": "Acrobats flip high inside the big circus ___.", "answer": "tent", "options": ["tent", "tree", "train", "truck"], "category": "Cozy Home"}, {"id": 199, "emojis": "🥇🏃‍♀️🌟", "sentence": "Mira crosses the finish line to win the gold ___.", "answer": "medal", "options": ["medal", "melon", "monkey", "mirror"], "category": "Cozy Home"}, {"id": 200, "emojis": "💖🎤🌟", "sentence": "Rumi, Mira, and Zoey are best ___ forever!", "answer": "friends", "options": ["friends", "frogs", "flowers", "feathers"], "category": "Cozy Home"}];
+    let currentIndex = parseInt(localStorage.getItem('rumi_stage_idx') || '0', 10);
+    if (isNaN(currentIndex) || currentIndex < 0 || currentIndex >= SENTENCES.length) currentIndex = 0;
+
+    let stars = parseInt(localStorage.getItem('rumi_stars') || '0', 10);
+    let slowMode = false;
+    let activeHero = 'Rumi';
+    let solvedCurrent = false;
+
+    const heroLines = {
+      Rumi: [
+        '🎤 Rumi: "Sing it loud! Pick the right word to power our Starlight!"',
+        '💜 Rumi: "Amazing reading! Our K-Pop magic is glowing!"'
+      ],
+      Mira: [
+        '🎧 Mira: "Feel the rhythm! Tap any word button to hear how it sounds!"',
+        '⚡ Mira: "Super cool move! You nailed that sentence!"'
+      ],
+      Zoey: [
+        '🌟 Zoey: "Yay! Look at the emojis and fill in the blank!"',
+        '💖 Zoey: "Woohoo! Best reader in the galaxy!"'
+      ]
+    };
+
+    function selectHero(name) {
+      activeHero = name;
+      document.querySelectorAll('.hero-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.hero === name);
+      });
+      document.getElementById('speechBubble').textContent = heroLines[name][0];
+      speakText(name + " is cheering for you!");
+    }
+
+    function speakText(text, onWordCallback, onEndCallback) {
+      if (!('speechSynthesis' in window)) {
+        if (onEndCallback) onEndCallback();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = slowMode ? 0.72 : 0.95;
+      utter.pitch = activeHero === 'Zoey' ? 1.25 : (activeHero === 'Rumi' ? 1.12 : 1.02);
+      if (onWordCallback) {
+        utter.onboundary = (e) => {
+          if (e.name === 'word') onWordCallback(e.charIndex);
+        };
+      }
+      utter.onend = () => {
+        if (onEndCallback) onEndCallback();
+      };
+      window.speechSynthesis.speak(utter);
+    }
+
+    function renderStage() {
+      solvedCurrent = false;
+      const item = SENTENCES[currentIndex];
+      document.getElementById('levelBtn').textContent = (currentIndex + 1) + ' / ' + SENTENCES.length;
+      document.getElementById('starCount').textContent = stars;
+      document.getElementById('categoryBadge').textContent = item.category;
+      document.getElementById('emojiTheater').textContent = item.emojis;
+
+      renderSentence(null);
+
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+      item.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerHTML = '🔊 ' + opt;
+        btn.onclick = () => handleOptionSelect(opt, btn);
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderSentence(filledWord) {
+      const item = SENTENCES[currentIndex];
+      const box = document.getElementById('sentenceBox');
+      box.innerHTML = '';
+      const parts = item.sentence.split('___');
+      const leftWords = parts[0].trim().split(/\s+/).filter(Boolean);
+      const rightWords = (parts[1] || '').trim().split(/\s+/).filter(Boolean);
+
+      leftWords.forEach(w => {
+        const span = document.createElement('span');
+        span.className = 'word-token';
+        span.textContent = w;
+        box.appendChild(span);
+      });
+
+      const blank = document.createElement('span');
+      blank.className = 'blank-slot word-token' + (filledWord ? ' filled' : '');
+      blank.textContent = filledWord ? filledWord : '____';
+      box.appendChild(blank);
+
+      rightWords.forEach(w => {
+        const span = document.createElement('span');
+        span.className = 'word-token';
+        span.textContent = w;
+        box.appendChild(span);
+      });
+    }
+
+    function handleOptionSelect(selectedWord, btnElement) {
+      const item = SENTENCES[currentIndex];
+      if (selectedWord === item.answer) {
+        btnElement.classList.add('correct');
+        if (!solvedCurrent) {
+          solvedCurrent = true;
+          stars += 1;
+          localStorage.setItem('rumi_stars', stars);
+          document.getElementById('starCount').textContent = stars;
+        }
+        renderSentence(selectedWord);
+        document.getElementById('speechBubble').textContent = heroLines[activeHero][1];
+        // First read out the selected option, then read out the full completed sentence
+        speakText(selectedWord, null, () => {
+          setTimeout(() => readSentenceAloud(false), 260);
+        });
+      } else {
+        btnElement.classList.add('wrong');
+        speakText(selectedWord);
+        document.getElementById('speechBubble').textContent = '✨ Try another word! Tap a button to hear it.';
+      }
+    }
+
+    function readSentenceAloud(useBlankPause) {
+      const item = SENTENCES[currentIndex];
+      const fullSentence = item.sentence.replace('___', solvedCurrent || !useBlankPause ? item.answer : 'blank');
+      const tokens = Array.from(document.querySelectorAll('#sentenceBox .word-token'));
+      let idx = 0;
+      speakText(fullSentence, () => {
+        tokens.forEach(t => t.classList.remove('reading'));
+        if (tokens[idx]) {
+          tokens[idx].classList.add('reading');
+          idx++;
+        }
+      }, () => {
+        tokens.forEach(t => t.classList.remove('reading'));
+      });
+    }
+
+    function nextStage() {
+      currentIndex = (currentIndex + 1) % SENTENCES.length;
+      localStorage.setItem('rumi_stage_idx', currentIndex);
+      renderStage();
+    }
+
+    function prevStage() {
+      currentIndex = (currentIndex - 1 + SENTENCES.length) % SENTENCES.length;
+      localStorage.setItem('rumi_stage_idx', currentIndex);
+      renderStage();
+    }
+
+    document.getElementById('speedBtn').onclick = () => {
+      slowMode = !slowMode;
+      const btn = document.getElementById('speedBtn');
+      btn.textContent = slowMode ? '🐢 Slow' : '🐇 Normal';
+      btn.classList.toggle('active', slowMode);
+    };
+
+    document.getElementById('levelBtn').onclick = () => {
+      const jump = prompt('Jump to sentence number (1 to 200):', currentIndex + 1);
+      const num = parseInt(jump, 10);
+      if (!isNaN(num) && num >= 1 && num <= SENTENCES.length) {
+        currentIndex = num - 1;
+        localStorage.setItem('rumi_stage_idx', currentIndex);
+        renderStage();
+      }
+    };
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2200);
+    }
+
+    function shareAppLink() {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: "Rumi's K-Pop Demon Hunters Word Quest",
+          text: "Play Rumi, Mira & Zoey's 200-Sentence K-Pop Word Reading Game!",
+          url: url
+        }).catch(() => copyAppLink());
+      } else {
+        copyAppLink();
+      }
+    }
+
+    function copyAppLink() {
+      const url = window.location.href;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => showToast('App Link Copied!'));
+      } else {
+        showToast('Share URL: ' + url);
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          reg.update();
+        }).catch(() => {});
+      });
+    }
+
+    renderStage();
+  </script>
+</body>
+</html>

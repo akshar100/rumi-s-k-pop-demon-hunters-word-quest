@@ -1,0 +1,25 @@
+{
+  "name": "Rumi's K-Pop Demon Hunters Word Quest",
+  "short_name": "Rumi Word Quest",
+  "description": "Mobile-first K-Pop Demon Hunters children's word reading game featuring Rumi, Mira, and Zoey with 200 emoji sentences and offline voice read-aloud!",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#120726",
+  "theme_color": "#ff2da5",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
